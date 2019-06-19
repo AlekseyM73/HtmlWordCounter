@@ -13,10 +13,10 @@ public class HtmlDownloader {
         this.url = url;
     }
 
-    public boolean download() {
+    public int download() {
         try {
             URL u = new URL(url);
-            fileName = filePath+u.getHost()+".html";
+            fileName = filePath+"\\"+u.getHost()+".html";
             HttpURLConnection connect = (HttpURLConnection) u.openConnection();
             connect.setReadTimeout(0);
             int response = connect.getResponseCode();
@@ -29,22 +29,25 @@ public class HtmlDownloader {
                             byteArrayOutputStream.write(buffer, 0, bytes);
                         }
                         saveFile(byteArrayOutputStream);
+                       return new WordCounter(fileName).parseHtml();
                     }
                 }
+            } else {
+                System.out.println("Error connect to site");
+                System.exit(1);
             }
     } catch(IOException i){
             i.printStackTrace();
         System.err.println("Error downloading the file " + fileName);
     }
-
-        return false;
+    return 0;
 }
 
     private void saveFile (ByteArrayOutputStream b){
         File file = new File(fileName);
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             b.writeTo(fileOutputStream);
-            System.out.println("File "+fileName+"downloaded");
+            System.out.println("File "+fileName+" downloaded");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error writing the file " + fileName);

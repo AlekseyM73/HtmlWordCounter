@@ -6,46 +6,28 @@ public class Manager {
 
     private String filePath;
     private String url;
-    private BufferedReader bufferedReader;
 
-   public void start(){
-       bufferedReader = new BufferedReader
-               (new InputStreamReader(System.in));
-       try {
-           filePathRequest();
+    public Manager(String url) {
+        this.url = url;
+    }
 
+    public void start(){
+       try (BufferedReader bufferedReader = new BufferedReader
+               (new InputStreamReader(System.in))) {
+           filePathRequest(bufferedReader);
        } catch (IOException i){
             i.printStackTrace();
        }
-
-       try {
-           urlRequest();
-       } catch (IOException i1){
-            i1.printStackTrace();
-       } finally {
-           try {
-               bufferedReader.close();
-           } catch (IOException i2){
-               i2.printStackTrace();
-           }
-       }
             HtmlDownloader htmlDownloader = new HtmlDownloader(filePath,url);
-            htmlDownloader.download();
+            int result = htmlDownloader.download();
+        System.out.println("The number of unique words " + result);
     }
 
-    private void filePathRequest() throws IOException{
-        System.out.println("Enter filepath");
+    private void filePathRequest(BufferedReader bufferedReader) throws IOException{
+        System.out.println("Enter path to save the file");
         filePath = bufferedReader.readLine();
         if ("".equals(filePath)){
-            filePathRequest();
-        }
-    }
-
-    private void urlRequest() throws IOException {
-        System.out.println("Enter URL");
-        url = bufferedReader.readLine();
-        if ("".equals(url)){
-            urlRequest();
+            filePathRequest(bufferedReader);
         }
     }
 }
